@@ -1,0 +1,44 @@
+{% extends 'tasks/base.html' %}
+{% block content %}
+<h2>Manage Tasks</h2>
+<a href="{% url 'create_task' %}" class="btn btn-success">Add New Task</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Assigned To</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in tasks %}
+        <tr>
+            <td>{{ task.name }}</td>
+            <td>{{ task.assigned_to.first_name }} {{ task.assigned_to.last_name }}</td>
+            <td>{{ task.start_date }}</td>
+            <td>{{ task.end_date }}</td>
+            <td>
+                <span class="badge {% if task.status == 'TODO' %}bg-secondary{% elif task.status == 'IN_PROGRESS' %}bg-primary{% elif task.status == 'BLOCKED' %}bg-danger{% elif task.status == 'DONE' %}bg-success{% endif %}">
+                    {{ task.get_status_display }}
+                </span>
+            </td>
+            <td>
+                <span class="badge {% if task.priority == 'HIGH' %}bg-danger{% elif task.priority == 'MEDIUM' %}bg-warning{% elif task.priority == 'LOW' %}bg-success{% endif %}">
+                    {{ task.get_priority_display }}
+                </span>
+            </td>
+            <td>
+                <a href="{% url 'update_task' task.id %}" class="btn btn-warning btn-sm">Edit</a>
+                <a href="{% url 'delete_task' task.id %}" class="btn btn-danger btn-sm">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock %}
