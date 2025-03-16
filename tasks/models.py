@@ -35,3 +35,15 @@ class Task(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.status} - {self.priority}"
+
+class TaskLog(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    updated_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    previous_status = models.CharField(max_length=20, choices=Task.STATUS_CHOICES)
+    new_status = models.CharField(max_length=20, choices=Task.STATUS_CHOICES)
+    previous_priority = models.CharField(max_length=10, choices=Task.PRIORITY_CHOICES)
+    new_priority = models.CharField(max_length=10, choices=Task.PRIORITY_CHOICES)
+    
+    def __str__(self):
+        return f"Task: {self.task.name} updated by {self.updated_by} at {self.timestamp}"

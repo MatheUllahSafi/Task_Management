@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-    <div class="card shadow-lg p-4" style="width: 600px;">
+    <div class="card shadow-lg p-4" style="width: 800px;">
         <h3 class="text-center mb-3">Task Details</h3>
 
         <table class="table">
@@ -61,6 +61,32 @@
             {% endif %}
             <a href="{% url 'manage_tasks' %}" class="btn btn-outline-secondary">Back to Tasks</a>
         </div>
+
+        <h3 class="mt-4">Task Update Logs</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Updated By</th>
+                    <th>Timestamp</th>
+                    <th>Previous Status</th>
+                    <th>New Status</th>
+                    <th>Previous Priority</th>
+                    <th>New Priority</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in task.tasklog_set.all %}
+                <tr>
+                    <td>{{ log.updated_by.first_name }} {{ log.updated_by.last_name }}</td>
+                    <td>{{ log.timestamp }}</td>
+                    <td>{{ log.previous_status }}</td>
+                    <td>{{ log.new_status }}</td>
+                    <td>{{ log.previous_priority }}</td>
+                    <td>{{ log.new_priority }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}

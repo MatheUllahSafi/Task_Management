@@ -3,7 +3,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
-from .models import Task, CustomUser
+from .models import Task, CustomUser, TaskLog
 from .forms import UserForm, TaskForm
 
 # Home (Task List)
@@ -159,6 +159,9 @@ def update_task(request, task_id):
     users = CustomUser.objects.filter(role='user')
 
     if request.method == 'POST':
+        previous_status = task.status
+        previous_priority = task.priority
+    
         task.name = request.POST['name']
         task.description = request.POST['description']
         task.start_date = request.POST['start_date']
@@ -168,11 +171,21 @@ def update_task(request, task_id):
         task.assigned_to = CustomUser.objects.get(id=request.POST['assigned_to'])
         task.save()
 
+        # Log the update only if status or priority has changed
+        if previous_status != task.status or previous_priority != task.priority:
+            TaskLog.objects.create(
+                task=task,
+                updated_by=request.user,
+                previous_status=previous_status,
+                new_status=task.status,
+                previous_priority=previous_priority,
+                new_priority=task.priority
+            )
+
         messages.success(request, "Task updated successfully!")
         return redirect('manage_tasks')
 
     return render(request, 'tasks/update_task.html', {'task': task, 'users': users})
-
 
 # Delete Task (Admin)
 @login_required
